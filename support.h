@@ -2,18 +2,24 @@
 #include <stdio.h>
 #include <string.h>
 
+char *output_name = NULL;
 FILE *output = NULL;
 char *source = NULL;
 int pos = 0;
-char *token = NULL;
+int line = 1;
 int test_flag = 0;
+char *token = NULL;
 
 void skip_whitespace(void)
 {
 	while (source[pos] == '\x20' || source[pos] == '\t' ||
 			source[pos] == '\r' || source[pos] == '\n') {
+		// increment line counter when new line reached
+		if (source[pos] == '\n') {
+			line++;
+		}
 		pos++;
-	} 
+	}
 }
 
 void make_token(int start_pos)
@@ -23,13 +29,6 @@ void make_token(int start_pos)
 	token = malloc(length + 1);
 	token[length] = '\0';
 	memcpy(token, &source[start_pos], length);
-}
-
-void shutdown(void)
-{
-	fclose(output);
-	free(source);
-	free(token);
 }
 
 // emits the currently recognized token
@@ -85,11 +84,10 @@ void read_literal(const char *literal)
 	}
 	// if the end of the literal has been reached, comparison successful
 	if (literal[i] == '\0') {
-		// copy recognized literal into token
-		make_token(entry_pos);
 		test_flag = 1;
+		make_token(entry_pos);
 	} else {
-		// rewind
+		// reset position
 		pos = entry_pos;
 		test_flag = 0;
 	}
@@ -116,7 +114,7 @@ void read_id(void)
 			('0' <= source[pos] && source[pos] <= '9')) {
 		pos++;
 	}
-	// copy recognized identifier into token
+	// recognition successful, copy into token
 	make_token(entry_pos);
 }
 
@@ -138,7 +136,7 @@ void read_number(void)
 	while ('0' <= source[pos] && source[pos] <= '9') {
 		pos++;
 	}
-	// copy recognized number into token
+	// recognition successful, copy into token
 	make_token(entry_pos);
 }
 
@@ -159,17 +157,20 @@ void read_string(void)
 
 	// recognize contents
 	while (source[pos] != '\0' && source[pos] != '\'') {
+		// increment line counter when new line reached
+		if (source[pos] == '\n') {
+			line++;
+		}
 		pos++;
 	}
 
 	// recognize final single quote
 	if (source[pos] == '\'') {
 		pos++;
-		// copy recognized string into token
-		make_token(entry_pos);
 		test_flag = 1;
+		make_token(entry_pos);
 	} else if (source[pos] == '\0') {
-		// rewind
+		// reset position
 		pos = entry_pos;
 		test_flag = 0;
 	}
@@ -178,8 +179,12 @@ void read_string(void)
 void error_if_false(void)
 {
     if (!test_flag) {
-        fprintf(stderr, "error\n");
-        shutdown();
+        fprintf(stderr, "error in line %i at token %s\n", line, token);
+		fclose(output);
+		// delete the output file
+		remove(output_name);
+		free(source);
+		free(token);
         exit(1);
     }
 }
@@ -203,7 +208,8 @@ int main(int argc, char *argv[])
 		fprintf(stderr, "invalid input file\n");
 		exit(1);
 	}
-	output = fopen(argv[2], "w");
+	output_name = argv[2];
+	output = fopen(output_name, "w");
 	if (output == NULL) {
 		fprintf(stderr, "invalid output file\n");
 		exit(1);
@@ -223,7 +229,9 @@ int main(int argc, char *argv[])
 
 	// run meta
 	meta_program();
-	shutdown();
+	fclose(output);
+	free(source);
+	free(token);
 	return 0;
 }
 
