@@ -178,15 +178,15 @@ void read_string(void)
 
 void error_if_false(void)
 {
-    if (!test_flag) {
-        fprintf(stderr, "error in line %i at token %s\n", line, token);
+	if (!test_flag) {
+		fprintf(stderr, "error in line %i at token %s\n", line, token);
 		fclose(output);
 		// delete the output file
 		remove(output_name);
 		free(source);
 		free(token);
-        exit(1);
-    }
+		exit(1);
+	}
 }
 
 void meta_program(void);
@@ -217,7 +217,7 @@ int main(int argc, char *argv[])
 	// read entire input into source
 	fseek(input, 0, SEEK_END);
 	length = (int)ftell(input);
-    fseek(input, 0, SEEK_SET);
+	fseek(input, 0, SEEK_SET);
 	source = malloc(length + 1);
 	fread(source, 1, length, input);
 	source[length] = '\0';
