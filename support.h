@@ -123,8 +123,12 @@ void read_number(void)
 	int entry_pos;
 
 	skip_whitespace();
-	// recognize initial numeric character
+	// recognize optional negative sign
 	entry_pos = pos;
+	if (source[pos] == '-') {
+		pos++;
+	}
+	// recognize initial numeric character
 	if ('0' <= source[pos] && source[pos] <= '9') {
 		pos++;
 		test_flag = 1;
