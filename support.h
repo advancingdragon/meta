@@ -100,7 +100,7 @@ void read_id(void)
 	skip_whitespace();
 	// recognize initial alphabetic character
 	entry_pos = pos;
-	if (('A' <= source[pos] && source[pos] <= 'A') ||
+	if (('A' <= source[pos] && source[pos] <= 'Z') ||
 			('a' <= source[pos] && source[pos] <= 'z')) {
 		pos++;
 		test_flag = 1;
@@ -109,7 +109,7 @@ void read_id(void)
 		return;
 	}
 	// recognize alphanumeric characters
-	while (('A' <= source[pos] && source[pos] <= 'A') ||
+	while (('A' <= source[pos] && source[pos] <= 'Z') ||
 			('a' <= source[pos] && source[pos] <= 'z') ||
 			('0' <= source[pos] && source[pos] <= '9')) {
 		pos++;
