@@ -18,6 +18,15 @@ void meta_arg(void)
 			emit(");");
 			emit_nl();
 		}
+
+		if (test_flag) { break; }
+
+		read_id();
+		if (test_flag) {
+			emit_token();
+			emit("();");
+			emit_nl();
+		}
 	} while (0);
 }
 

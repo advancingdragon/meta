@@ -1,7 +1,8 @@
 .syntax meta
 
 arg = '$' <'emit_token();'>
-    | .string <'emit(' $ ');'>;
+    | .string <'emit(' $ ');'>
+    | .id <$ '();'>;
 
 output = '<' *arg '>' <'emit_nl();'>;
 
