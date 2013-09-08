@@ -1,38 +1,37 @@
 .syntax meta
 
-arg = '$' <'emit_token();'>
-    | .string <'emit(' $ ');'>
-    | .id <$ '();'>;
+arg = '$' {'emit_token();'}
+    | .string {'emit(' $ ');'};
 
-output = '<' *arg '>' <'emit_nl();'>;
+output = '{' *arg '}' {'emit_nl();'};
 
-exp3 = .id <'meta_' $ '();'>
-     | .string <'read_literal(' $ ');'>
-     | '.id' <'read_id();'>
-     | '.number' <'read_number();'>
-     | '.string' <'read_string();'>
+exp3 = .id {'meta_' $ '();'}
+     | .string {'read_literal(' $ ');'}
+     | '.id' {'read_id();'}
+     | '.number' {'read_number();'}
+     | '.string' {'read_string();'}
      | '(' exp1 ')'
-     | '.e' <'test_flag = 1;'>
-     | '*' <'do {'>
-       exp3 <'} while (test_flag);'>
-       <'test_flag = 1;'>;
+     | '.e' {'test_flag = 1;'}
+     | '*' {'do {'}
+       exp3 {'} while (test_flag);'}
+       {'test_flag = 1;'};
 
-exp2 = ( exp3 <'if (test_flag) {'>
-       | output <'if (1) {'> )
-       *( exp3 <'error_if_false();'>
+exp2 = ( exp3 {'if (test_flag) {'}
+       | output {'if (1) {'} )
+       *( exp3 {'error_if_false();'}
         | output )
-       <'}'>;
+       {'}'};
 
-exp1 = <'do {'> exp2
-       *( '|' <'if (test_flag) { break; }'> exp2 )
-       <'} while (0);'>;
+exp1 = {'do {'} exp2
+       *( '|' {'if (test_flag) { break; }'} exp2 )
+       {'} while (0);'};
 
-stat = .id <'void meta_' $ '(void)'>
-       <'{'>
+stat = .id {'void meta_' $ '(void)'}
+       {'{'}
        '=' exp1 ';'
-       <'}'>;
+       {'}'};
 
-program = '.syntax' .id <'#include "support.h"'>
+program = '.syntax' .id {'#include "support.h"'}
           *stat
           '.end';
 

@@ -18,22 +18,13 @@ void meta_arg(void)
 			emit(");");
 			emit_nl();
 		}
-
-		if (test_flag) { break; }
-
-		read_id();
-		if (test_flag) {
-			emit_token();
-			emit("();");
-			emit_nl();
-		}
 	} while (0);
 }
 
 void meta_output(void)
 {
 	do {
-		read_literal("<");
+		read_literal("{");
 		if (test_flag) {
 			do {
 				meta_arg();
@@ -41,7 +32,7 @@ void meta_output(void)
 			test_flag = 1;
 			error_if_false();
 
-			read_literal(">");
+			read_literal("}");
 			error_if_false();
 
 			emit("emit_nl();");

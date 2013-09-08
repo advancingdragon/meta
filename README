@@ -13,5 +13,5 @@ gcc -Wall -o bin/boot bootstrap.c
 gcc -Wall -o bin/meta bin/meta.c
 
 The original version of META-II only allowed productions to emit
-arbitrary text or the last recognized token. This version is
-augmented with the ability to call arbitrary functions.
+arbitrary text or the last recognized token.
+This version is ZASHQUARED.
